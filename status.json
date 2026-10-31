@@ -1,0 +1,19 @@
+{
+  "backup_count": 1,
+  "backups": [
+    {
+      "artifact_url": "https://github.com/newdarwindev/dots-slackdump-export/releases/download/history-local-20261031T200124Z-1e2332ef/slackdump-export.zip.age",
+      "encrypted_bytes": 338584,
+      "message_records": 918,
+      "published_at": "2026-10-31T20:01:34Z",
+      "release_bytes": 340440,
+      "release_url": "https://github.com/newdarwindev/dots-slackdump-export/releases/tag/history-local-20261031T200124Z-1e2332ef",
+      "status": "verified encrypted Release",
+      "type": "baseline"
+    }
+  ],
+  "encrypted_storage_bytes": 338584,
+  "generated_at": "2026-10-31T20:41:13+00:00",
+  "message_records_archived": 918,
+  "release_storage_bytes": 340440
+}

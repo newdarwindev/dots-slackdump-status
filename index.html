@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slack backup status</title>
+<style>
+:root{font-family:system-ui,sans-serif;color-scheme:light dark}body{max-width:900px;margin:3rem auto;padding:0 1rem;line-height:1.5}h1{margin-bottom:.25rem}.muted{opacity:.75}main{display:grid;gap:1rem}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem}.card,article{border:1px solid #8887;border-radius:.7rem;padding:1rem}.value{font-size:1.6rem;font-weight:700}a{margin-right:1rem}small{display:block;margin-top:.4rem}
+</style></head><body><main><header><h1>Slack backup status</h1><p class="muted">Encrypted private GitHub Releases. Artifact links require repository access.</p><p id="updated">Loading status…</p></header><div class="cards" id="summary"></div><section><h2>Backups</h2><div id="backups"></div></section><p class="muted">Counts are archived message records, including overlap across incremental backups; they are not unique messages. Storage is the size of Release assets, not GitHub account billing usage. Files are metadata and links only; attachment bytes and DMs are excluded. Coverage is limited to accessible channels and history retained by Slack.</p></main>
+<script>
+const number=n=>new Intl.NumberFormat().format(n);
+const bytes=n=>new Intl.NumberFormat(undefined,{style:'unit',unit:'megabyte',maximumFractionDigits:2}).format(n/1e6);
+function card(label,value){const el=document.createElement('div');el.className='card';const v=document.createElement('div');v.className='value';v.textContent=value;const t=document.createElement('div');t.textContent=label;el.append(v,t);return el}
+function link(url,label){const a=document.createElement('a');a.href=url;a.textContent=label;a.rel='noopener noreferrer';return a}
+fetch('./status.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('status unavailable');return r.json()}).then(s=>{
+ document.getElementById('updated').textContent='Updated '+new Date(s.generated_at).toLocaleString();
+ const sum=document.getElementById('summary');sum.append(card('Verified backups',number(s.backup_count)),card('Message records archived',number(s.message_records_archived)),card('Encrypted archive storage',bytes(s.encrypted_storage_bytes)),card('All Release asset storage',bytes(s.release_storage_bytes)));
+ const list=document.getElementById('backups');for(const b of s.backups){const row=document.createElement('article');const title=document.createElement('strong');title.textContent=b.type+' · '+new Date(b.published_at).toLocaleString();const detail=document.createElement('small');detail.textContent=b.status+' · '+number(b.message_records)+' records · '+bytes(b.encrypted_bytes)+' encrypted';row.append(title,detail,link(b.release_url,'Release'),link(b.artifact_url,'Encrypted artifact'));list.append(row)}
+ if(!s.backups.length)list.textContent='No verified backups yet.';
+}).catch(()=>{document.getElementById('updated').textContent='Status feed unavailable.'});
+</script></body></html>
